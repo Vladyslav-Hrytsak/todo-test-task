@@ -1,7 +1,11 @@
-import {PrismaClient} from "@prisma/client/extension";
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-// Singleton pattern: избегаем создания множества соединений с БД
-// при hot-reload в dev-режиме (ts-node-dev пересоздаёт модули)
+// Prisma 7: встроенный query engine убран из клиента.
+// Адаптер оборачивает нативный `pg` driver и передаётся в конструктор явно.
+const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+});
 
 declare global {
     // eslint-disable-next-line no-var
@@ -9,6 +13,7 @@ declare global {
 }
 
 export const prisma = global.prisma || new PrismaClient({
+    adapter,
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 });
 

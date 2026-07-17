@@ -1,10 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import taskRoutes from '@/routes/task.routes';
 import { errorHandler } from '@/middlewares/errorHandler';
-
-dotenv.config();
 
 const app: Application = express();
 
@@ -17,7 +14,6 @@ app.get('/health', (_req, res) => {
 
 app.use('/api/tasks', taskRoutes);
 
-// Error handler — обязательно последним middleware, после всех роутов
 app.use(errorHandler);
 
 export default app;

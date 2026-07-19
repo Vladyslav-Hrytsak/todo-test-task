@@ -8,16 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { useCreateTask } from '../hooks';
 
-/**
- * Форма создания задачи. Управляемые поля через useState — для формы такого
- * размера (4 поля) это проще и читабельнее, чем подключать react-hook-form,
- * который оправдан при больших формах с сложной кросс-валидацией.
- */
 export function TaskForm() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [priority, setPriority] = useState([5]);
     const [category, setCategory] = useState('');
+    const [dueDate, setDueDate] = useState('');
 
     const createTask = useCreateTask();
 
@@ -31,15 +27,17 @@ export function TaskForm() {
                 description: description.trim() || undefined,
                 priority: priority[0],
                 category: category.trim() || undefined,
+                // input type="date" отдаёт "YYYY-MM-DD" — конвертируем в полноценный
+                // ISO datetime, так как backend (Zod) ожидает z.string().datetime()
+                dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
             },
             {
                 onSuccess: () => {
-                    // Сброс формы только при успехе — при ошибке пользователь
-                    // не должен терять то, что уже напечатал
                     setTitle('');
                     setDescription('');
                     setPriority([5]);
                     setCategory('');
+                    setDueDate('');
                 },
             },
         );
@@ -71,7 +69,7 @@ export function TaskForm() {
                 />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="category">Category (optional)</Label>
                     <Input
@@ -84,14 +82,23 @@ export function TaskForm() {
                 </div>
 
                 <div className="space-y-2">
+                    <Label htmlFor="dueDate">Due date (optional)</Label>
+                    <Input
+                        id="dueDate"
+                        type="date"
+                        value={dueDate}
+                        onChange={(e) => setDueDate(e.target.value)}
+                        min={new Date().toISOString().split('T')[0]}
+                    />
+                </div>
+
+                <div className="space-y-2">
                     <Label>
                         Priority: <span className="font-semibold">{priority[0]}</span>/10
                     </Label>
                     <Slider
                         value={priority}
                         onValueChange={(value) => {
-                            // Base UI Slider может вернуть одиночное число или массив (range-режим) —
-                            // у нас всегда single-slider, но типы это не гарантируют, поэтому нормализуем
                             setPriority(Array.isArray(value) ? [...value] : [value]);
                         }}
                         min={1}

@@ -11,20 +11,30 @@ interface TaskItemProps {
     task: Task;
 }
 
-/**
- * priorityColor — простое сопоставление диапазона приоритета с семантическим
- * цветом badge. 1-3 (низкий) серый, 4-7 (средний) синий, 8-10 (высокий) красный.
- * Даёт мгновенное визуальное сканирование списка без чтения чисел.
- */
 function getPriorityVariant(priority: number): 'secondary' | 'default' | 'destructive' {
     if (priority >= 8) return 'destructive';
     if (priority >= 4) return 'default';
     return 'secondary';
 }
 
+function formatDueDate(dueDate: string): string {
+    return new Date(dueDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+    });
+}
+
+function isOverdue(dueDate: string, done: boolean): boolean {
+    // Просроченной задача считается только если она ещё не выполнена —
+    // выполненная задача с прошедшим due date не должна пугать пользователя красным
+    return !done && new Date(dueDate) < new Date();
+}
+
 export function TaskItem({ task }: TaskItemProps) {
     const toggleTask = useToggleTask();
     const deleteTask = useDeleteTask();
+
+    const overdue = task.dueDate ? isOverdue(task.dueDate, task.done) : false;
 
     return (
         <div className="flex items-center gap-3 rounded-lg border p-3">
@@ -42,6 +52,13 @@ export function TaskItem({ task }: TaskItemProps) {
                     <p className="text-xs text-muted-foreground truncate">{task.description}</p>
                 )}
             </div>
+
+            {task.dueDate && (
+                <Badge variant={overdue ? 'destructive' : 'outline'} className="shrink-0">
+                    {overdue ? 'Overdue: ' : 'Due '}
+                    {formatDueDate(task.dueDate)}
+                </Badge>
+            )}
 
             {task.category && (
                 <Badge variant="outline" className="shrink-0">

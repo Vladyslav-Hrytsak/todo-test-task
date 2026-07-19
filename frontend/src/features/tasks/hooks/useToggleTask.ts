@@ -9,8 +9,6 @@ export function useToggleTask() {
 
     return useMutation({
         mutationFn: taskApi.toggleDone,
-        // Optimistic update: чекбокс должен переключаться мгновенно, без ожидания
-        // ответа сервера — иначе UX ощущается "тормозным" на каждом клике.
         onMutate: async (id: string) => {
             await queryClient.cancelQueries({ queryKey: taskKeys.lists() });
 
@@ -29,7 +27,6 @@ export function useToggleTask() {
             return { previousQueries };
         },
         onError: (_err, _id, context) => {
-            // Откат к предыдущему состоянию при ошибке сервера
             context?.previousQueries.forEach(([queryKey, tasks]) => {
                 queryClient.setQueryData(queryKey, tasks);
             });

@@ -2,11 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { AppError } from '@/utils/errors';
 
-/**
- * Централизованный обработчик ошибок — последний middleware в цепочке.
- * Controller-слой просто делает `next(error)`, вся логика формирования
- * HTTP-ответа сосредоточена здесь (Single Responsibility).
- */
+
 export function errorHandler(
     err: Error,
     _req: Request,
@@ -30,7 +26,6 @@ export function errorHandler(
         return;
     }
 
-    // Непредвиденная ошибка — не палим stack trace клиенту, логируем на сервере
     console.error('Unexpected error:', err);
     res.status(500).json({ error: 'Internal server error' });
 }

@@ -6,11 +6,6 @@ import type {
     TaskQueryParams,
 } from '../types/task.types';
 
-/**
- * Тонкий слой над axios: каждая функция — один HTTP-запрос, один тип ответа.
- * Ничего не знает о React/React Query — переиспользуем эти функции
- * и в хуках, и потенциально в server actions/SSR при необходимости.
- */
 export const taskApi = {
     getAll: async (params: TaskQueryParams = {}): Promise<Task[]> => {
         const { data } = await apiClient.get<Task[]>('/tasks', { params });

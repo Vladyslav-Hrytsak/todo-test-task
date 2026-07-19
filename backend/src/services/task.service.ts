@@ -3,12 +3,6 @@ import { taskRepository } from '@/repositories/task.repository';
 import { CreateTaskDTO, UpdateTaskDTO, TaskQueryOptions } from '@/types/task.types';
 import { NotFoundError } from '@/utils/errors';
 
-/**
- * TaskService — бизнес-логика приложения.
- * Не знает о HTTP (req/res) и не знает о Prisma напрямую — только о Repository.
- * Валидация формата данных (Zod) происходит на уровне Controller,
- * здесь — только бизнес-инварианты (например, "задача должна существовать").
- */
 class TaskService {
     async getTasks(options: TaskQueryOptions): Promise<Task[]> {
         return taskRepository.findAll(options);

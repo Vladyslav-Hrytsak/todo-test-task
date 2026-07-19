@@ -2,16 +2,11 @@ import { Request, Response } from 'express';
 import { taskService } from '@/services/task.service';
 import { createTaskSchema, updateTaskSchema, taskQuerySchema } from '@/utils/task.validation';
 
-// Явный тип параметров пути — фиксирует req.params.id как string,
-// вместо дефолтного ParamsDictionary (string | string[])
+
 interface TaskParams {
     id: string;
 }
 
-/**
- * Controller — тонкий слой: парсинг запроса, вызов Service, формирование ответа.
- * Никакой бизнес-логики и никаких прямых обращений к Prisma здесь быть не должно.
- */
 class TaskController {
     async getAll(req: Request, res: Response): Promise<void> {
         const query = taskQuerySchema.parse(req.query);

@@ -3,9 +3,7 @@ import { taskRepository } from '@/repositories/task.repository';
 import { NotFoundError } from '@/utils/errors';
 import { Task } from '@prisma/client';
 
-// Мокаем весь модуль репозитория — Service тестируется в полной изоляции от Prisma/БД.
-// Это юнит-тест: проверяем только бизнес-логику (существование, toggle),
-// а не то, правильно ли Prisma формирует SQL-запрос (это зона Repository/integration-тестов).
+
 jest.mock('@/repositories/task.repository');
 
 const mockedRepository = taskRepository as jest.Mocked<typeof taskRepository>;
@@ -50,8 +48,7 @@ describe('TaskService', () => {
                 taskService.updateTask('missing-id', { title: 'New title' }),
             ).rejects.toThrow(NotFoundError);
 
-            // update не должен вызываться, если сущность не найдена —
-            // защита от лишнего запроса к БД
+
             expect(mockedRepository.update).not.toHaveBeenCalled();
         });
 

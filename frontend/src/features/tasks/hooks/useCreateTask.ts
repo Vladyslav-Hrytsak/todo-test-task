@@ -9,9 +9,6 @@ export function useCreateTask() {
     return useMutation({
         mutationFn: taskApi.create,
         onSuccess: () => {
-            // Инвалидируем все списки задач — простая и надёжная стратегия
-            // для CRUD-приложения такого масштаба (альтернатива — optimistic update,
-            // избыточна для scope теста, но упомянуть в Loom стоит как trade-off)
             queryClient.invalidateQueries({ queryKey: taskKeys.lists() });
             toast.success('Task created');
         },

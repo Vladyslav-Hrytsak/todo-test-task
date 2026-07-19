@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
-/**
- * Оборачивает async-контроллер, автоматически прокидывая брошенные ошибки в next().
- * Generic-параметры проброшены насквозь, чтобы обёртка не "стирала"
- * специфичную типизацию req.params (например, TaskParams) до общего ParamsDictionary.
- */
+
 export function asyncHandler<
 P = Record<string, string>,
     ResBody = unknown,

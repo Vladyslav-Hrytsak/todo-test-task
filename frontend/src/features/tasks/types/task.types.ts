@@ -1,8 +1,3 @@
-// Зеркалирует backend/src/types/task.types.ts.
-// Без monorepo-tooling (npm workspaces / turborepo) нет способа шарить типы
-// напрямую между отдельными репозиториями backend/frontend — осознанный
-// trade-off ради простоты для scope тестового задания.
-
 export interface Task {
     id: string;
     title: string;
@@ -10,7 +5,7 @@ export interface Task {
     done: boolean;
     priority: number;
     category: string | null;
-    dueDate: string | null; // приходит с backend как ISO string (JSON не знает Date)
+    dueDate: string | null;
     createdAt: string;
     updatedAt: string;
 }

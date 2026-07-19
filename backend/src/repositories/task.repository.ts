@@ -2,16 +2,7 @@ import { Prisma, Task } from '@prisma/client';
 import { prisma } from '@/config/prisma';
 import { CreateTaskDTO, UpdateTaskDTO, TaskQueryOptions } from '@/types/task.types';
 
-/**
- * TaskRepository — единственный слой, знающий о Prisma/SQL.
- * Service-слой обращается только сюда, никогда напрямую к prisma client.
- * Это позволяет в будущем сменить ORM/БД, не трогая бизнес-логику.
- */
 class TaskRepository {
-    /**
-     * Строит Prisma `where` clause из query-параметров.
-     * Вынесено в приватный метод, чтобы findAll оставался читаемым.
-     */
     private buildWhereClause(options: TaskQueryOptions): Prisma.TaskWhereInput {
         const where: Prisma.TaskWhereInput = {};
 
@@ -20,10 +11,8 @@ class TaskRepository {
         } else if (options.status === 'undone') {
             where.done = false;
         }
-        // status === 'all' | undefined -> без фильтра по done
 
         if (options.search && options.search.trim() !== '') {
-            // mode: 'insensitive' — поиск без учёта регистра, ожидаемое поведение для UX
             where.OR = [
                 { title: { contains: options.search, mode: 'insensitive' } },
                 { description: { contains: options.search, mode: 'insensitive' } },
@@ -87,6 +76,4 @@ class TaskRepository {
     }
 }
 
-// Singleton export — как и prisma client, репозиторий не имеет состояния,
-// нет смысла создавать новый инстанс на каждый запрос
 export const taskRepository = new TaskRepository();

@@ -1,14 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-// Prisma 7: встроенный query engine убран из клиента.
-// Адаптер оборачивает нативный `pg` driver и передаётся в конструктор явно.
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
 });
 
 declare global {
-    // eslint-disable-next-line no-var
     var prisma: PrismaClient | undefined;
 }
 
